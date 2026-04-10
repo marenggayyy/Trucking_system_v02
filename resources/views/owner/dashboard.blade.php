@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.owner')
 
 @section('title', 'Dashboard')
 
@@ -6,4 +6,4 @@
 
 <h1>Owner Dashboard</h1>
 
-@endsection
+@endsection 
