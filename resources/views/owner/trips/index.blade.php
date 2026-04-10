@@ -1,9 +1,17 @@
-@extends('layouts.app')
+@extends('layouts.owner')
 
-@section('title', 'Trips')
+@section('page-class', 'page-trips')
 
 @section('content')
 
-<h1>Trip Dashboard</h1>
+<div class="p-4">
+
+    @include('owner.trips.partials.header')
+
+    @include('owner.trips.partials.cards')
+
+    @include('owner.trips.partials.modals')
+
+</div>
 
 @endsection
