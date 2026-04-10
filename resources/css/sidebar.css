@@ -14,17 +14,49 @@
     transition: transform 0.3s ease;
 }
 
-/* Mobile hidden */
+/* MOBILE: hidden by default */
+@media (max-width: 768px) {
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 50;
+        background: white;
+        transform: translateX(-100%);
+    }
+
+    #sidebar.show {
+        transform: translateX(0);
+    }
+
+    .content-expanded {
+        margin-left: 0;
+    }
+}
+
 .sidebar-hidden {
     transform: translateX(-100%);
 }
 
-/* Desktop always visible */
+/* DESKTOP */
 @media (min-width: 768px) {
-    .sidebar {
-        transform: translateX(0) !important;
+    [data-content] {
+        transition: margin 0.3s ease;
+        margin-left: 260px;
+    }
+
+    .content-expanded {
+        margin-left: 0;
     }
 }
+
+
+/* Smooth animation */
+#sidebar {
+    transition: transform 0.3s ease;
+}
+
 
 /* ===============================
    PROFILE

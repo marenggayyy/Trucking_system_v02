@@ -21,13 +21,6 @@ return new class extends Migration {
 
             // ➕ ADDITIONS
             $table->decimal('allowance', 10, 2)->default(0);
-            $table->decimal('bonus', 10, 2)->default(0);
-
-            // ➖ DEDUCTIONS
-            $table->decimal('sss', 10, 2)->default(0);
-            $table->decimal('pagibig', 10, 2)->default(0);
-            $table->decimal('philhealth', 10, 2)->default(0);
-            $table->decimal('cash_advance', 10, 2)->default(0);
 
             // 💵 FINAL
             $table->decimal('net_pay', 10, 2)->default(0);

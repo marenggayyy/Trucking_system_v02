@@ -1,8 +1,15 @@
-<aside id="sidebar" class="sidebar sidebar-hidden md:translate-x-0">
+<aside id="sidebar" class="sidebar md:translate-x-0">
 
     <!-- Profile -->
     <div class="sidebar-profile">
-        <h2 class="text-center">Owner Panel</h2>
+
+        <div class="shrink-0 flex items-center">
+            <button onclick="toggleSidebar()" class="flex items-center">
+                <x-application-logo class="block h-9 m-3 w-auto fill-current text-gray-800 dark:text-gray-200" />
+            </button>
+            <h2 class="text-center">Owner Panel</h2>
+        </div>
+
     </div>
 
     <!-- Home -->
@@ -54,22 +61,19 @@
             <span class="dot"> </span>
             Trips / Dispatch
         </a>
-        <a href="#"
-            class="sidebar-subitem {{ request()->routeIs('owner.trucks.*') ? 'active' : '' }}">
+        <a href="#" class="sidebar-subitem {{ request()->routeIs('owner.trucks.*') ? 'active' : '' }}">
             <span class="dot"> </span>
             Trucks
         </a>
-        <a href="#"
-            class="sidebar-subitem {{ request()->routeIs('owner.employees.*') ? 'active' : '' }}">
+        <a href="#" class="sidebar-subitem {{ request()->routeIs('owner.employees.*') ? 'active' : '' }}">
             <span class="dot"> </span>
             Employees
         </a>
-        <a href="#"
-            class="sidebar-subitem {{ request()->routeIs('owner.destinations.*') ? 'active' : '' }}">
+        <a href="#" class="sidebar-subitem {{ request()->routeIs('owner.destinations.*') ? 'active' : '' }}">
             <span class="dot"> </span>
             Destinations
         </a>
-       
+
     </div>
 
     <!-- Finance -->

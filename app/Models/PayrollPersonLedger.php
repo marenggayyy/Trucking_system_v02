@@ -11,11 +11,6 @@ class PayrollPersonLedger extends Model
         'employee_id',
         'total_earnings',
         'allowance',
-        'bonus',
-        'sss',
-        'pagibig',
-        'philhealth',
-        'cash_advance',
         'net_pay',
         'payment_status'
     ];

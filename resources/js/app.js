@@ -17,15 +17,40 @@ window.toggleOperations = function () {
     arrow.classList.toggle('rotate');
 }
 
-//SIDEBAR
+//SIDEBAR//
 window.toggleSidebar = function () {
     const sidebar = document.getElementById('sidebar');
     const content = document.querySelector('[data-content]');
 
-    sidebar.classList.toggle('sidebar-hidden');
+    if (window.innerWidth < 768) {
+        // 📱 MOBILE → overlay mode
+        sidebar.classList.toggle('show');
+    } else {
+        // 💻 DESKTOP → push layout
+        const isHidden = sidebar.classList.contains('sidebar-hidden');
 
-    // adjust content spacing (desktop)
-    if (window.innerWidth >= 768) {
-        content.classList.toggle('md:ml-[260px]');
+        if (isHidden) {
+            sidebar.classList.remove('sidebar-hidden');
+            content.classList.remove('content-expanded');
+        } else {
+            sidebar.classList.add('sidebar-hidden');
+            content.classList.add('content-expanded');
+        }
     }
 }
+
+document.addEventListener('click', function (e) {
+    const sidebar = document.getElementById('sidebar');
+
+    if (window.innerWidth < 768) {
+        if (!sidebar.contains(e.target) && !e.target.closest('button')) {
+            sidebar.classList.remove('show');
+        }
+    }
+});
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        document.getElementById('sidebar').classList.remove('show');
+    }
+});

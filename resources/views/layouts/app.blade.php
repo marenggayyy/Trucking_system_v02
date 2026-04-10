@@ -22,7 +22,7 @@
     @endauth
 
     <!-- RIGHT SIDE -->
-    <div data-content class="md:ml-[260px] min-h-screen flex flex-col">
+    <div data-content class="min-h-screen flex flex-col">
 
         <!-- NAVBAR -->
         <div class="bg-white border-b">
