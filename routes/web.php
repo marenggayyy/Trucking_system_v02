@@ -3,46 +3,42 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Public
+|--------------------------------------------------------------------------
+*/
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
 
-Route::middleware('auth')->group(function () {
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-Route::middleware(['auth'])->group(function () {
-
-    Route::prefix('owner')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('owner.dashboard');
-        })->name('owner.dashboard');
-    });
-
-    Route::prefix('admin')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('admin.dashboard');
-    });
-
-    Route::prefix('secretary')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('secretary.dashboard');
-        })->name('secretary.dashboard');
-    });
-
-    Route::prefix('it')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('it.dashboard');
-        })->name('it.dashboard');
-    });
 
 });
 
+/*
+|--------------------------------------------------------------------------
+| Auth (Laravel Breeze / Jetstream)
+|--------------------------------------------------------------------------
+*/
 require __DIR__.'/auth.php';
+
+/*
+|--------------------------------------------------------------------------
+| Role Routes
+|--------------------------------------------------------------------------
+*/
+require __DIR__.'/owner.php';
+require __DIR__.'/admin.php';
+require __DIR__.'/secretary.php';
+require __DIR__.'/it.php';
