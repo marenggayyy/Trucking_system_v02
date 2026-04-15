@@ -11,8 +11,22 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+
+
+     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
+
+    <link rel="stylesheet" href="{{ asset('assets/css/core/libs.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/gigz.min.css?v=1.0.0') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.min.css?v=1.0.0') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/@fortawesome/fontawesome-free/css/all.min.css') }}" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @stack('styles')
 </head>
 
 
@@ -36,8 +50,56 @@
 
     </div>
 
+     <script src="{{ asset('assets/js/core/libs.min.js') }}"></script>
+    <script src="{{ asset('assets/js/core/external.min.js') }}"></script>
+
+    <script src="{{ asset('assets/js/charts/widgetcharts.js') }}"></script>
+    <script src="{{ asset('assets/js/charts/vectore-chart.js') }}"></script>
+    <script src="{{ asset('assets/js/charts/dashboard.js') }}" defer></script>
+    <script src="{{ asset('assets/js/plugins/fslightbox.js') }}"></script>
+    <script src="{{ asset('assets/vendor/gsap/gsap.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/gsap/ScrollTrigger.min.js') }}"></script>
+    <script src="{{ asset('assets/js/gsap-init.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/form-wizard.js') }}"></script>
+
+    <script src="{{ asset('assets/js/gigz.js') }}" defer></script>
+
+    {{-- Bootstrap --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof bootstrap === 'undefined') return;
+
+            document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(function(toggle) {
+                bootstrap.Dropdown.getOrCreateInstance(toggle);
+            });
+
+            function closeAllDropdowns() {
+                document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(function(toggle) {
+                    const inst = bootstrap.Dropdown.getInstance(toggle);
+                    if (inst) inst.hide();
+                });
+
+                document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+                document.querySelectorAll('.dropdown-toggle.show').forEach(t => t.classList.remove('show'));
+            }
+
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) closeAllDropdowns();
+            });
+
+            window.addEventListener('pageshow', closeAllDropdowns);
+        });
+    </script>
+
+    <script src="https://unpkg.com/heroicons@2.0.18/dist/heroicons.min.js"></script>
+
+@stack('scripts')
 </body>
 
-<script src="https://unpkg.com/heroicons@2.0.18/dist/heroicons.min.js"></script>
+
 
 </html>

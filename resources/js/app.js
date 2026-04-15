@@ -3,9 +3,9 @@ import Alpine from 'alpinejs';
 
 import '../css/app.css';
 import '../css/sidebar.css';
-import '../css/modules/trips.css';
+// import '../css/modules/trips.css';
 
-import { initTrips } from './modules/trips';
+// import { initTrips } from './modules/trips';
 
 window.Alpine = Alpine;
 Alpine.start();
