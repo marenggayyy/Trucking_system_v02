@@ -9,49 +9,44 @@
         <div class="ui-hero p-4 mb-4">
             <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
                 <div>
-                    <h4 class="mb-1 fw-bold">Destinations</h4>
+                    <h4 class="mb-1 fw-bold">Destinations &amp; Rates</h4>
                     <div class="text-muted small">
                         Routes &amp; Job Points — planning, costing, and optimisation.
                     </div>
                 </div>
+
+                <form method="GET" action="{{ route('owner.destinations.index') }}"
+                    class="ui-card-actions ui-card-actions--destinations">
+
+                    {{-- keep tab on search --}}
+                    <input type="hidden" name="tab" value="{{ request('tab', '6w') }}">
+
+                    <div class="ui-searchbox ui-searchbox--destinations">
+                        <i class="bi bi-search"></i>
+                        <input type="text" name="q" value="{{ request('q') }}" class="form-control"
+                            placeholder="Search store code, name, area...">
+                    </div>
+
+                    @if (request('q'))
+                        <a href="{{ route('owner.destinations.index', request()->except('q', 'page6w', 'pageL300')) }}"
+                            class="btn btn-outline-secondary btn-sm ui-btn-40 ui-btn-40--block">
+                            Clear
+                        </a>
+                    @endif
+
+                    <button type="button" class="btn btn-primary btn-sm ui-btn-40 ui-btn-40--block" data-bs-toggle="modal"
+                        data-bs-target="#addDestinationModal">
+                        <i class="bi bi-plus-lg me-1"></i> Add Destination
+                    </button>
+                </form>
+
+
             </div>
         </div>
 
         {{-- Destination List --}}
         <div class="card shadow-sm">
-
-            {{-- HEADER --}}
-            <div class="card-header bg-white border-0">
-                <div class="ui-card-header">
-                    <h5 class="mb-0 fw-bold ui-card-title">Destinations &amp; Rates</h5>
-
-                    <form method="GET" action="{{ route('owner.destinations.index') }}"
-                        class="ui-card-actions ui-card-actions--destinations">
-
-                        {{-- keep tab on search --}}
-                        <input type="hidden" name="tab" value="{{ request('tab', '6w') }}">
-
-                        <div class="ui-searchbox ui-searchbox--destinations">
-                            <i class="bi bi-search"></i>
-                            <input type="text" name="q" value="{{ request('q') }}" class="form-control"
-                                placeholder="Search store code, name, area...">
-                        </div>
-
-                        @if (request('q'))
-                            <a href="{{ route('owner.destinations.index', request()->except('q', 'page6w', 'pageL300')) }}"
-                                class="btn btn-outline-secondary btn-sm ui-btn-40 ui-btn-40--block">
-                                Clear
-                            </a>
-                        @endif
-
-                        <button type="button" class="btn btn-primary btn-sm ui-btn-40 ui-btn-40--block"
-                            data-bs-toggle="modal" data-bs-target="#addDestinationModal">
-                            <i class="bi bi-plus-lg me-1"></i> Add Destination
-                        </button>
-                    </form>
-                </div>
-            </div>
-
+    
             {{-- ADD DESTINATION MODAL (outside header) --}}
             <div class="modal fade" id="addDestinationModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -664,8 +659,8 @@
 @push('styles')
     <style>
         /* =========================================================
-                                                                                       HERO / KPI CARDS
-                                                                                    ========================================================= */
+                                                                                           HERO / KPI CARDS
+                                                                                        ========================================================= */
         .ui-hero {
             border-radius: 20px;
             border: 1px solid rgba(0, 0, 0, .05);
@@ -695,8 +690,8 @@
 
 
         /* =========================================================
-                                                                                       KPI / DROPDOWN CONTROLS
-                                                                                    ========================================================= */
+                                                                                           KPI / DROPDOWN CONTROLS
+                                                                                        ========================================================= */
         .ui-eye-btn {
             width: 36px;
             height: 36px;
@@ -729,8 +724,8 @@
 
 
         /* =========================================================
-                                                                                       HEADER / ACTIONS / SEARCH
-                                                                                    ========================================================= */
+                                                                                           HEADER / ACTIONS / SEARCH
+                                                                                        ========================================================= */
         .ui-card-header {
             display: flex;
             align-items: center;
@@ -780,8 +775,8 @@
 
 
         /* =========================================================
-                                                                                       BUTTONS
-                                                                                    ========================================================= */
+                                                                                           BUTTONS
+                                                                                        ========================================================= */
         .ui-btn-40 {
             height: 40px;
             display: inline-flex;
@@ -803,8 +798,8 @@
 
 
         /* =========================================================
-                                                                                       TABS
-                                                                                    ========================================================= */
+                                                                                           TABS
+                                                                                        ========================================================= */
         .ui-tabs {
             flex-wrap: nowrap;
             overflow-x: auto;
@@ -818,8 +813,8 @@
 
 
         /* =========================================================
-                                                                                       MOBILE DESTINATION CARDS
-                                                                                    ========================================================= */
+                                                                                           MOBILE DESTINATION CARDS
+                                                                                        ========================================================= */
         .ui-mobile-destination {
             border-radius: 16px;
             transition: .2s ease;
@@ -885,8 +880,8 @@
 
 
         /* =========================================================
-                                                                                       PAGINATION
-                                                                                    ========================================================= */
+                                                                                           PAGINATION
+                                                                                        ========================================================= */
         .ui-pagination-responsive {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -907,8 +902,8 @@
 
 
         /* =========================================================
-                                                                                       RATE BADGES
-                                                                                    ========================================================= */
+                                                                                           RATE BADGES
+                                                                                        ========================================================= */
         .ui-rate-badge {
             color: #259c39;
             font-weight: 700;
@@ -919,8 +914,8 @@
 
 
         /* =========================================================
-                                                                                       REMARKS DRAWER / OVERLAY
-                                                                                    ========================================================= */
+                                                                                           REMARKS DRAWER / OVERLAY
+                                                                                        ========================================================= */
         .remarks-drawer {
             position: fixed;
             top: 0;
@@ -968,8 +963,8 @@
 
 
         /* =========================================================
-                                                                                       RESPONSIVE
-                                                                                    ========================================================= */
+                                                                                           RESPONSIVE
+                                                                                        ========================================================= */
         @media (max-width:991.98px) {
 
             .ui-card-header {

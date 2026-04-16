@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Truck;
+use App\Models\Company;
 use Illuminate\Http\Request;
 
 class TruckController extends Controller
@@ -18,27 +19,39 @@ class TruckController extends Controller
             ->latest()
             ->paginate(10, ['*'], 'l300_page');
 
+        /*
+        |--------------------------------------------------------------------------
+        | CORRECT STATS (IMPORTANT)
+        |--------------------------------------------------------------------------
+        */
         $stats = [
             'total' => Truck::count(),
-            'available' => Truck::where('status', 'active')->count(),
+            'available' => Truck::where('status', 'available')->count(),
             'on_trip' => Truck::where('status', 'on_trip')->count(),
-            'out_of_service' => Truck::where('status', 'inactive')->count(),
+            'out_of_service' => Truck::whereIn('status', ['on_maintenance', 'unavailable'])->count(),
         ];
 
-        return view('owner.trucks.index', compact(
-            'sixWTrucks',
-            'l300Trucks',
-            'stats'
-        ));
+        // ✅ REQUIRED for blade
+        $companies = Company::orderBy('name')->get();
+
+        return view('owner.trucks.index', compact('sixWTrucks', 'l300Trucks', 'stats', 'companies'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'company_id' => 'required|exists:companies,id',
             'plate_number' => 'required|string|max:50|unique:trucks,plate_number',
             'truck_type' => 'required|in:L300,6W',
-            'status' => 'required|in:active,inactive,on_trip',
+            'status' => 'required|in:available,on_trip,on_maintenance,unavailable',
         ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | DEFAULT AVAILABILITY
+        |--------------------------------------------------------------------------
+        */
+        $validated['availability_status'] = 'available';
 
         Truck::create($validated);
 
@@ -48,10 +61,24 @@ class TruckController extends Controller
     public function update(Request $request, Truck $truck)
     {
         $validated = $request->validate([
+            'company_id' => 'required|exists:companies,id',
             'plate_number' => 'required|string|max:50|unique:trucks,plate_number,' . $truck->id,
             'truck_type' => 'required|in:L300,6W',
-            'status' => 'required|in:active,inactive,on_trip',
+            'status' => 'required|in:active,inactive,on_maintenance',
         ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | AUTO HANDLE AVAILABILITY BASED ON STATUS
+        |--------------------------------------------------------------------------
+        */
+        if ($validated['status'] === 'inactive') {
+           
+        }
+
+        if ($validated['status'] === 'on_maintenance') {
+          
+        }
 
         $truck->update($validated);
 

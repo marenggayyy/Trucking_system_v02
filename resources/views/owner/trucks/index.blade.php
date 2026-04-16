@@ -22,7 +22,7 @@
         </div>
 
         {{-- Fleet Summary (Indicators) --}}
-        <div class="row g-3 mb-4">
+        <div class="row g-3 mb-1">
             <div class="col-6 col-md-3">
                 <div class="card ui-card border-0 ui-indicator ui-kpi-card w-100">
                     <div class="card-body text-center ui-kpi-body">
@@ -78,6 +78,16 @@
                             @csrf
 
                             <div class="mb-3">
+                                <label class="form-label fw-semibold">Company</label>
+                                <select class="form-select" name="company_id" required>
+                                    <option value="" disabled selected>Select company</option>
+                                    @foreach ($companies as $company)
+                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
                                 <label class="form-label fw-semibold">Plate Number</label>
                                 <input class="form-control" name="plate_number" placeholder="e.g. ABC-1234" required>
                             </div>
@@ -94,8 +104,10 @@
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Status</label>
                                 <select class="form-select" name="status">
-                                    <option value="active" selected>Active</option>
-                                    <option value="inactive">Inactive</option>
+                                    <option value="available">Available</option>
+                                    <option value="on_trip">On Trip</option>
+                                    <option value="on_maintenance">On Maintenance</option>
+                                    <option value="unavailable">Unavailable</option>
                                 </select>
                             </div>
 
@@ -193,9 +205,7 @@
 
                                         <tbody>
                                             @forelse($sixWTrucks as $truck)
-                                                @php
-                                                    $status = $truck->status;
-                                                @endphp
+                                                @php $status = $truck->status; @endphp
 
                                                 <tr>
                                                     <td class="fw-semibold">{{ $truck->plate_number }}</td>
@@ -203,54 +213,56 @@
                                                     <td>
                                                         <span
                                                             class="ui-badge 
-                                                                {{ $status === 'active' ? 'ui-badge-completed' : '' }}
-                                                                {{ $status === 'inactive' ? 'ui-badge-cancelled' : '' }}
-                                                                {{ $status === 'on_trip' ? 'ui-badge-primary' : '' }}
-                                                            ">
-                                                            <span
-                                                                class="ui-dot 
-                                                                {{ $status === 'active' ? 'ui-dot-completed' : '' }}
-                                                                {{ $status === 'inactive' ? 'ui-dot-cancelled' : '' }}
-                                                                {{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
-                                                            "></span>
-                                                            {{ ucfirst($truck->status) }}
-                                                        </span>
-                                                    </td>
+    {{ $status === 'available' ? 'ui-badge-completed' : '' }}
+    {{ $status === 'on_trip' ? 'ui-badge-primary' : '' }}
+    {{ $status === 'on_maintenance' ? 'ui-badge-warning' : '' }}
+    {{ $status === 'unavailable' ? 'ui-badge-cancelled' : '' }}" ">
+                                                                        <span
+                                                                            class="ui-dot 
+           {{ $status === 'available' ? 'ui-dot-completed' : '' }}
+{{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
+{{ $status === 'on_maintenance' ? 'ui-dot-warning' : '' }}
+{{ $status === 'unavailable' ? 'ui-dot-cancelled' : '' }}
+        "></span>
 
-                                                    <td class="text-end">
-                                                        <div class="d-inline-flex gap-2">
-                                                            <button class="btn btn-sm btn-warning ui-icon-btn"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#editTruckModal-6w-{{ $truck->id }}"
-                                                                title="Edit">
-                                                                <i class="bi bi-pencil"></i>
-                                                            </button>
+                                                                        {{ ucfirst(str_replace('_', ' ', $status)) }}
+                                                                    </span>
+                                                                </td>
 
-                                                            <form action="{{ route('owner.trucks.destroy', $truck->id) }}"
-                                                                method="POST" class="d-inline"
-                                                                onsubmit="return confirm('Delete this truck permanently?')">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button class="btn btn-sm ui-icon-btn" title="Delete">
-                                                                    <i class="bi bi-trash3"></i>
-                                                                </button>
-                                                            </form>
+                                                                <td class="text-end">
+                                                                    <div class="d-inline-flex gap-2">
+                                                                        <button class="btn btn-sm btn-warning ui-icon-btn"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#editTruckModal-6w-{{ $truck->id }}"
+                                                                            title="Edit">
+                                                                            <i class="bi bi-pencil"></i>
+                                                                        </button>
 
-                                                            <button class="btn btn-sm btn-info ui-icon-btn"
-                                                                title="View Details"
-                                                                onclick="openSidebar({{ $truck->id }})">
-                                                                <i class="bi bi-eye"></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                                        <form action="{{ route('owner.trucks.destroy', $truck->id) }}"
+                                                                            method="POST" class="d-inline"
+                                                                            onsubmit="return confirm('Delete this truck permanently?')">
+                                                                            @csrf
+                                                                            @method('DELETE')
+                                                                            <button class="btn btn-sm ui-icon-btn" title="Delete">
+                                                                                <i class="bi bi-trash3"></i>
+                                                                            </button>
+                                                                        </form>
+
+                                                                        <button class="btn btn-sm btn-info ui-icon-btn"
+                                                                            title="View Details"
+                                                                            onclick="openSidebar({{ $truck->id }})">
+                                                                            <i class="bi bi-eye"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
                                             @empty
-                                                <tr>
-                                                    <td colspan="3" class="text-center text-muted py-4">
-                                                        No 6W trucks registered.
-                                                    </td>
-                                                </tr>
-                                            @endforelse
+                                                            <tr>
+                                                                <td colspan="3" class="text-center text-muted py-4">
+                                                                    No 6W trucks registered.
+                                                                </td>
+                                                            </tr>
+     @endforelse
                                         </tbody>
                                     </table>
                                 </div>
@@ -310,17 +322,27 @@
 
                                         <tbody>
                                             @forelse($l300Trucks as $truck)
-                                                @php $isActive = ($truck->status === 'active'); @endphp
+                                                @php $status = $truck->status; @endphp
 
                                                 <tr>
                                                     <td class="fw-semibold">{{ $truck->plate_number }}</td>
 
                                                     <td>
                                                         <span
-                                                            class="ui-badge {{ $isActive ? 'ui-badge-completed' : 'ui-badge-cancelled' }}">
+                                                            class="ui-badge 
+    {{ $status === 'available' ? 'ui-badge-completed' : '' }}
+    {{ $status === 'on_trip' ? 'ui-badge-primary' : '' }}
+    {{ $status === 'on_maintenance' ? 'ui-badge-warning' : '' }}
+    {{ $status === 'unavailable' ? 'ui-badge-cancelled' : '' }}">
                                                             <span
-                                                                class="ui-dot {{ $isActive ? 'ui-dot-completed' : 'ui-dot-cancelled' }}"></span>
-                                                            {{ ucfirst($truck->status) }}
+                                                                class="ui-dot 
+           {{ $status === 'available' ? 'ui-dot-completed' : '' }}
+{{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
+{{ $status === 'on_maintenance' ? 'ui-dot-warning' : '' }}
+{{ $status === 'unavailable' ? 'ui-dot-cancelled' : '' }}
+        "></span>
+
+                                                            {{ ucfirst(str_replace('_', ' ', $status)) }}
                                                         </span>
                                                     </td>
 
@@ -374,7 +396,7 @@
 
                     {{-- 6W --}}
                     @forelse($sixWTrucks as $truck)
-                        @php $isActive = $truck->status === 'active'; @endphp
+                        @php $status = $truck->status; @endphp
 
                         <div class="card border-0 shadow-sm mb-3 ui-mobile-truck">
                             <div class="card-body">
@@ -396,8 +418,14 @@
                                         <span class="ui-truck-label">Status</span>
                                         <span class="ui-truck-value">
                                             <span
-                                                class="ui-dot {{ $isActive ? 'ui-dot-completed' : 'ui-dot-cancelled' }}"></span>
-                                            {{ ucfirst($truck->status) }}
+                                                class="ui-dot 
+      {{ $status === 'available' ? 'ui-dot-completed' : '' }}
+{{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
+{{ $status === 'on_maintenance' ? 'ui-dot-warning' : '' }}
+{{ $status === 'unavailable' ? 'ui-dot-cancelled' : '' }}
+    "></span>
+
+                                            {{ ucfirst(str_replace('_', ' ', $status)) }}
                                         </span>
                                     </div>
                                 </div>
@@ -438,7 +466,7 @@
 
                     {{-- L300 --}}
                     @forelse($l300Trucks as $truck)
-                        @php $isActive = $truck->status === 'active'; @endphp
+                        @php $status = $truck->status; @endphp
 
                         <div class="card border-0 shadow-sm mb-3 ui-mobile-truck">
                             <div class="card-body">
@@ -460,8 +488,14 @@
                                         <span class="ui-truck-label">Status</span>
                                         <span class="ui-truck-value">
                                             <span
-                                                class="ui-dot {{ $isActive ? 'ui-dot-completed' : 'ui-dot-cancelled' }}"></span>
-                                            {{ ucfirst($truck->status) }}
+                                                class="ui-dot 
+        {{ $status === 'available' ? 'ui-dot-completed' : '' }}
+{{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
+{{ $status === 'on_maintenance' ? 'ui-dot-warning' : '' }}
+{{ $status === 'unavailable' ? 'ui-dot-cancelled' : '' }}
+    "></span>
+
+                                            {{ ucfirst(str_replace('_', ' ', $status)) }}
                                         </span>
                                     </div>
                                 </div>
@@ -470,7 +504,7 @@
                                 <div class="mt-3 d-flex justify-content-end gap-2 ui-mobile-actions">
 
                                     <button class="btn btn-sm btn-warning ui-icon-btn" data-bs-toggle="modal"
-                                        data-bs-target="#editTruckModal-6w-{{ $truck->id }}" title="Edit">
+                                        data-bs-target="#editTruckModal-l300-{{ $truck->id }}" title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </button>
 
@@ -520,6 +554,18 @@
                             @method('PUT')
 
                             <div class="mb-3">
+                                <label class="form-label fw-semibold">Company</label>
+                                <select class="form-select" name="company_id" required>
+                                    @foreach ($companies as $company)
+                                        <option value="{{ $company->id }}"
+                                            {{ $truck->company_id == $company->id ? 'selected' : '' }}>
+                                            {{ $company->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
                                 <label class="form-label fw-semibold">Plate
                                     Number</label>
                                 <input class="form-control" name="plate_number" value="{{ $truck->plate_number }}"
@@ -540,10 +586,14 @@
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Status</label>
                                 <select class="form-select" name="status">
-                                    <option value="active" {{ $truck->status === 'active' ? 'selected' : '' }}>
-                                        Active</option>
-                                    <option value="inactive" {{ $truck->status === 'inactive' ? 'selected' : '' }}>
-                                        Inactive</option>
+                                    <option value="available" {{ $truck->status === 'available' ? 'selected' : '' }}>
+                                        Available</option>
+                                    <option value="on_trip" {{ $truck->status === 'on_trip' ? 'selected' : '' }}>On Trip
+                                    </option>
+                                    <option value="on_maintenance"
+                                        {{ $truck->status === 'on_maintenance' ? 'selected' : '' }}>On Maintenance</option>
+                                    <option value="unavailable" {{ $truck->status === 'unavailable' ? 'selected' : '' }}>
+                                        Unavailable</option>
                                 </select>
                             </div>
 
@@ -577,6 +627,19 @@
                         <form method="POST" action="{{ route('owner.trucks.update', $truck->id) }}">
                             @csrf
                             @method('PUT')
+                            
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Company</label>
+                                <select class="form-select" name="company_id" required>
+                                    @foreach ($companies as $company)
+                                        <option value="{{ $company->id }}"
+                                            {{ $truck->company_id == $company->id ? 'selected' : '' }}>
+                                            {{ $company->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Plate
@@ -599,10 +662,14 @@
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Status</label>
                                 <select class="form-select" name="status">
-                                    <option value="active" {{ $truck->status === 'active' ? 'selected' : '' }}>
-                                        Active</option>
-                                    <option value="inactive" {{ $truck->status === 'inactive' ? 'selected' : '' }}>
-                                        Inactive</option>
+                                    <option value="available" {{ $truck->status === 'available' ? 'selected' : '' }}>
+                                        Available</option>
+                                    <option value="on_trip" {{ $truck->status === 'on_trip' ? 'selected' : '' }}>On Trip
+                                    </option>
+                                    <option value="on_maintenance"
+                                        {{ $truck->status === 'on_maintenance' ? 'selected' : '' }}>On Maintenance</option>
+                                    <option value="unavailable" {{ $truck->status === 'unavailable' ? 'selected' : '' }}>
+                                        Unavailable</option>
                                 </select>
                             </div>
 
@@ -725,11 +792,73 @@
 
 @endsection
 
+
+
+@push('scripts')
+    <script>
+        function openSidebar(truckId) {
+            const overlay = document.getElementById('sidebarOverlay');
+            const sidebar = document.getElementById('truckSidebar');
+            const content = document.getElementById('truckSidebarContent');
+
+            overlay.style.display = 'block';
+            sidebar.classList.add('active');
+
+            content.innerHTML = `
+        <div class="p-4 text-center text-muted">
+            Loading...
+        </div>
+    `;
+
+            fetch(`/owner/trucks/sidebar/${truckId}`)
+                .then(response => response.text())
+                .then(html => {
+                    content.innerHTML = html;
+                })
+                .catch(() => {
+                    content.innerHTML = `
+                <div class="p-4 text-danger text-center">
+                    Failed to load truck details.
+                </div>
+            `;
+                });
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebarOverlay').style.display = 'none';
+            document.getElementById('truckSidebar').classList.remove('active');
+        }
+    </script>
+
+    <div id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <div id="truckSidebar">
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+            <h5 class="mb-0 fw-bold">Truck Details</h5>
+            <button class="btn btn-sm btn-outline-secondary" onclick="closeSidebar()">
+                &times;
+            </button>
+        </div>
+
+        <div id="truckSidebarContent" class="flex-grow-1"></div>
+    </div>
+@endpush
+
 @push('styles')
     <style>
+        .ui-badge-warning {
+            background: #fff7e6;
+            color: #b54708;
+            border-color: #fedf89;
+        }
+
+        .ui-dot-warning {
+            background: #f79009;
+        }
+
         /* =========================================================
-               CORE UI
-            ========================================================= */
+                                                                                               CORE UI
+                                                                                            ========================================================= */
         .ui-card {
             border-radius: 18px;
             box-shadow: 0 14px 40px rgba(16, 24, 40, .08);
@@ -759,8 +888,8 @@
 
 
         /* =========================================================
-               BUTTONS
-            ========================================================= */
+                                                                                               BUTTONS
+                                                                                            ========================================================= */
         .ui-pill-btn {
             border-radius: 999px;
             padding: .45rem .9rem;
@@ -783,8 +912,8 @@
 
 
         /* =========================================================
-               KPI CARDS
-            ========================================================= */
+                                                                                               KPI CARDS
+                                                                                            ========================================================= */
         .ui-kpi-card .card-body {
             padding: 25px 10px;
         }
@@ -809,8 +938,8 @@
 
 
         /* =========================================================
-               INDICATORS
-            ========================================================= */
+                                                                                               INDICATORS
+                                                                                            ========================================================= */
         .ui-indicator {
             position: relative;
             overflow: hidden;
@@ -848,8 +977,8 @@
 
 
         /* =========================================================
-               TABLES
-            ========================================================= */
+                                                                                               TABLES
+                                                                                            ========================================================= */
         .ui-table-wrap {
             border: 1px solid #edf0f4;
             border-radius: 16px;
@@ -889,8 +1018,8 @@
 
 
         /* =========================================================
-               PAGINATION
-            ========================================================= */
+                                                                                               PAGINATION
+                                                                                            ========================================================= */
         .ui-pager-top {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -905,8 +1034,8 @@
 
 
         /* =========================================================
-               BADGES / STATUS
-            ========================================================= */
+                                                                                               BADGES / STATUS
+                                                                                            ========================================================= */
         .ui-badge {
             display: inline-flex;
             align-items: center;
@@ -957,8 +1086,8 @@
 
 
         /* =========================================================
-               ICON BUTTONS
-            ========================================================= */
+                                                                                               ICON BUTTONS
+                                                                                            ========================================================= */
         .ui-icon-btn {
             border-radius: 12px;
             border: 1px solid transparent;
@@ -1000,8 +1129,8 @@
 
 
         /* =========================================================
-               SECTION PILLS
-            ========================================================= */
+                                                                                               SECTION PILLS
+                                                                                            ========================================================= */
         .ui-section-pill {
             display: inline-flex;
             align-items: center;
@@ -1017,8 +1146,8 @@
 
 
         /* =========================================================
-               MOBILE CARDS
-            ========================================================= */
+                                                                                               MOBILE CARDS
+                                                                                            ========================================================= */
         .ui-mobile-truck {
             border-radius: 16px;
             transition: .2s ease;
@@ -1077,8 +1206,8 @@
 
 
         /* =========================================================
-               HEADER ACTIONS
-            ========================================================= */
+                                                                                               HEADER ACTIONS
+                                                                                            ========================================================= */
         .ui-header-actions {
             display: flex;
             gap: 12px;
@@ -1114,8 +1243,8 @@
 
 
         /* =========================================================
-               SIDEBAR
-            ========================================================= */
+                                                                                               SIDEBAR
+                                                                                            ========================================================= */
         #sidebarOverlay {
             position: fixed;
             inset: 0;
@@ -1151,54 +1280,4 @@
             }
         }
     </style>
-@endpush
-
-@push('scripts')
-    <script>
-        function openSidebar(truckId) {
-            const overlay = document.getElementById('sidebarOverlay');
-            const sidebar = document.getElementById('truckSidebar');
-            const content = document.getElementById('truckSidebarContent');
-
-            overlay.style.display = 'block';
-            sidebar.classList.add('active');
-
-            content.innerHTML = `
-        <div class="p-4 text-center text-muted">
-            Loading...
-        </div>
-    `;
-
-            fetch(`/owner/trucks/sidebar/${truckId}`)
-                .then(response => response.text())
-                .then(html => {
-                    content.innerHTML = html;
-                })
-                .catch(() => {
-                    content.innerHTML = `
-                <div class="p-4 text-danger text-center">
-                    Failed to load truck details.
-                </div>
-            `;
-                });
-        }
-
-        function closeSidebar() {
-            document.getElementById('sidebarOverlay').style.display = 'none';
-            document.getElementById('truckSidebar').classList.remove('active');
-        }
-    </script>
-
-    <div id="sidebarOverlay" onclick="closeSidebar()"></div>
-
-    <div id="truckSidebar">
-        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
-            <h5 class="mb-0 fw-bold">Truck Details</h5>
-            <button class="btn btn-sm btn-outline-secondary" onclick="closeSidebar()">
-                &times;
-            </button>
-        </div>
-
-        <div id="truckSidebarContent" class="flex-grow-1"></div>
-    </div>
 @endpush

@@ -11,7 +11,6 @@ class Truck extends Model
         'plate_number',
         'truck_type',
         'status',
-        'availability_status'
     ];
 
     public function company()
