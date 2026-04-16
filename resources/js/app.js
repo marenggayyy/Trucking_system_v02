@@ -21,6 +21,22 @@ window.toggleOperations = function () {
     arrow?.classList.toggle('rotate');
 };
 
+window.toggleFinance = function () {
+    const menu = document.getElementById('financeMenu');
+    const arrow = document.getElementById('financeArrow');
+
+    menu?.classList.toggle('hidden');
+    arrow?.classList.toggle('rotate');
+};
+
+window.toggleManagement = function () {
+    const menu = document.getElementById('managementMenu');
+    const arrow = document.getElementById('managementArrow');
+
+    menu?.classList.toggle('hidden');
+    arrow?.classList.toggle('rotate');
+};
+
 window.toggleSidebar = function () {
     const sidebar = document.getElementById('sidebar');
     const content = document.querySelector('[data-content]');
