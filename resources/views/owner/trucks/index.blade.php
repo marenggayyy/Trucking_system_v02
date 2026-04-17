@@ -1,8 +1,18 @@
+@if ($errors->any())
+    <div class="alert alert-danger">
+        @foreach ($errors->all() as $error)
+            <div>{{ $error }}</div>
+        @endforeach
+    </div>
+@endif
+
+
 @extends('layouts.owner')
 
 @section('title', 'Trucks')
 
 @section('content')
+
     <div class="container-fluid py-4">
 
         {{-- Header (TEAM UI HERO) --}}

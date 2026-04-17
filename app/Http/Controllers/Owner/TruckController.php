@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Truck;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class TruckController extends Controller
 {
@@ -59,31 +60,23 @@ class TruckController extends Controller
     }
 
     public function update(Request $request, Truck $truck)
-    {
-        $validated = $request->validate([
-            'company_id' => 'required|exists:companies,id',
-            'plate_number' => 'required|string|max:50|unique:trucks,plate_number,' . $truck->id,
-            'truck_type' => 'required|in:L300,6W',
-            'status' => 'required|in:active,inactive,on_maintenance',
-        ]);
+{
+    $validated = $request->validate([
+        'company_id' => 'required|exists:companies,id',
+        'plate_number' => [
+            'required',
+            'string',
+            'max:50',
+            Rule::unique('trucks', 'plate_number')->ignore($truck->id),
+        ],
+        'truck_type' => 'required|in:L300,6W',
+        'status' => 'required|in:available,on_trip,on_maintenance,unavailable',
+    ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | AUTO HANDLE AVAILABILITY BASED ON STATUS
-        |--------------------------------------------------------------------------
-        */
-        if ($validated['status'] === 'inactive') {
-           
-        }
+    $truck->update($validated);
 
-        if ($validated['status'] === 'on_maintenance') {
-          
-        }
-
-        $truck->update($validated);
-
-        return back()->with('success', 'Truck updated successfully.');
-    }
+    return back()->with('success', 'Truck updated successfully.');
+}
 
     public function destroy(Truck $truck)
     {
