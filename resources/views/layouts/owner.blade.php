@@ -15,7 +15,7 @@
 
 
 
-     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
+    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
 
     <link rel="stylesheet" href="{{ asset('assets/css/core/libs.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/gigz.min.css?v=1.0.0') }}" />
@@ -27,6 +27,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @stack('styles')
+
 </head>
 
 
@@ -50,7 +51,7 @@
 
     </div>
 
-     <script src="{{ asset('assets/js/core/libs.min.js') }}"></script>
+    <script src="{{ asset('assets/js/core/libs.min.js') }}"></script>
     <script src="{{ asset('assets/js/core/external.min.js') }}"></script>
 
     <script src="{{ asset('assets/js/charts/widgetcharts.js') }}"></script>
@@ -96,10 +97,9 @@
     </script>
 
     <script src="https://unpkg.com/heroicons@2.0.18/dist/heroicons.min.js"></script>
+    <script src="https://unpkg.com/@hotwired/turbo@8.0.0/dist/turbo.es2017-umd.js"></script>
 
-@stack('scripts')
+    @stack('scripts')
 </body>
-
-
 
 </html>

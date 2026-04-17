@@ -175,13 +175,6 @@
                                     <span class="ui-section-pill">
                                         <i class="bi bi-truck-front me-1"></i> 6W
                                     </span>
-
-                                    <span class="text-muted small">
-                                        Showing
-                                        <strong>{{ $sixWTrucks->firstItem() ?? 0 }}–{{ $sixWTrucks->lastItem() ?? 0 }}</strong>
-                                        /
-                                        <strong>{{ $sixWTrucks->total() ?? 0 }}</strong>
-                                    </span>
                                 </div>
 
                                 <div class="d-flex align-items-center gap-2 ms-auto">
@@ -189,13 +182,13 @@
                                         <button type="button"
                                             class="btn btn-outline-danger btn-sm ui-pill-btn ui-btn-equal"
                                             data-bs-toggle="modal" data-bs-target="#deleteAll6WModal"
-                                            {{ ($sixWTrucks->total() ?? 0) == 0 ? 'disabled' : '' }}>
+                                            {{ ($sixWTrucks->count() ?? 0) == 0 ? 'disabled' : '' }}>
                                             <i class="bi bi-trash3 me-1"></i> Delete All
                                         </button>
                                     </div>
-                                    <div class="ui-pager-top">
-                                        {{ $sixWTrucks->onEachSide(1)->links() }}
-                                    </div>
+                                    <span class="text-muted small">
+                                        Total: <strong>{{ $sixWTrucks->count() }}</strong>
+                                    </span>
                                 </div>
                             </div>
 
@@ -223,56 +216,52 @@
                                                     <td>
                                                         <span
                                                             class="ui-badge 
-    {{ $status === 'available' ? 'ui-badge-completed' : '' }}
-    {{ $status === 'on_trip' ? 'ui-badge-primary' : '' }}
-    {{ $status === 'on_maintenance' ? 'ui-badge-warning' : '' }}
-    {{ $status === 'unavailable' ? 'ui-badge-cancelled' : '' }}" ">
-                                                                        <span
-                                                                            class="ui-dot 
-           {{ $status === 'available' ? 'ui-dot-completed' : '' }}
-{{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
-{{ $status === 'on_maintenance' ? 'ui-dot-warning' : '' }}
-{{ $status === 'unavailable' ? 'ui-dot-cancelled' : '' }}
-        "></span>
+                                                                {{ $status === 'available' ? 'ui-badge-completed' : '' }}
+                                                                {{ $status === 'on_trip' ? 'ui-badge-primary' : '' }}
+                                                                {{ $status === 'on_maintenance' ? 'ui-badge-warning' : '' }}
+                                                                {{ $status === 'unavailable' ? 'ui-badge-cancelled' : '' }} ">
+                                                            <span
+                                                                class="ui-dot 
+                                                                    {{ $status === 'available' ? 'ui-dot-completed' : '' }}
+                                                                    {{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
+                                                                    {{ $status === 'on_maintenance' ? 'ui-dot-warning' : '' }}
+                                                                    {{ $status === 'unavailable' ? 'ui-dot-cancelled' : '' }}
+                                                                "></span>
 
-                                                                        {{ ucfirst(str_replace('_', ' ', $status)) }}
-                                                                    </span>
-                                                                </td>
+                                                            {{ ucfirst(str_replace('_', ' ', $status)) }}
+                                                        </span>
+                                                    </td>
 
-                                                                <td class="text-end">
-                                                                    <div class="d-inline-flex gap-2">
-                                                                        <button class="btn btn-sm btn-warning ui-icon-btn"
-                                                                            data-bs-toggle="modal"
-                                                                            data-bs-target="#editTruckModal-6w-{{ $truck->id }}"
-                                                                            title="Edit">
-                                                                            <i class="bi bi-pencil"></i>
-                                                                        </button>
+                                                    <td class="text-end">
+                                                        <div class="d-inline-flex gap-2">
+                                                            <button class="btn btn-sm btn-warning ui-icon-btn"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#editTruckModal-6w-{{ $truck->id }}"
+                                                                title="Edit">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
 
-                                                                        <form action="{{ route('owner.trucks.destroy', $truck->id) }}"
-                                                                            method="POST" class="d-inline"
-                                                                            onsubmit="return confirm('Delete this truck permanently?')">
-                                                                            @csrf
-                                                                            @method('DELETE')
-                                                                            <button class="btn btn-sm ui-icon-btn" title="Delete">
-                                                                                <i class="bi bi-trash3"></i>
-                                                                            </button>
-                                                                        </form>
+                                                            <button type="button"
+                                                                class="btn btn-sm ui-icon-btn btn-danger"
+                                                                onclick="openDeleteModal({{ $truck->id }})">
+                                                                <i class="bi bi-trash3"></i>
+                                                            </button>
 
-                                                                        <button class="btn btn-sm btn-info ui-icon-btn"
-                                                                            title="View Details"
-                                                                            onclick="openSidebar({{ $truck->id }})">
-                                                                            <i class="bi bi-eye"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
+                                                            <button class="btn btn-sm btn-info ui-icon-btn"
+                                                                title="View Details"
+                                                                onclick="openSidebar({{ $truck->id }})">
+                                                                <i class="bi bi-eye"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
                                             @empty
-                                                            <tr>
-                                                                <td colspan="3" class="text-center text-muted py-4">
-                                                                    No 6W trucks registered.
-                                                                </td>
-                                                            </tr>
-     @endforelse
+                                                <tr>
+                                                    <td colspan="3" class="text-center text-muted py-4">
+                                                        No 6W trucks registered.
+                                                    </td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>
@@ -291,13 +280,7 @@
                                     <span class="ui-section-pill">
                                         <i class="bi bi-truck me-1"></i> L300 - AUV
                                     </span>
-
-                                    <span class="text-muted small">
-                                        Showing
-                                        <strong>{{ $l300Trucks->firstItem() ?? 0 }}–{{ $l300Trucks->lastItem() ?? 0 }}</strong>
-                                        /
-                                        <strong>{{ $l300Trucks->total() ?? 0 }}</strong>
-                                    </span>
+                                    <strong>{{ $l300Trucks->count() }}</strong>
                                 </div>
 
                                 <div class="d-flex align-items-center gap-2 ms-auto">
@@ -305,13 +288,13 @@
                                         <button type="button"
                                             class="btn btn-outline-danger btn-sm ui-pill-btn ui-btn-equal"
                                             data-bs-toggle="modal" data-bs-target="#deleteAllL300Modal"
-                                            {{ ($l300Trucks->total() ?? 0) == 0 ? 'disabled' : '' }}>
+                                            {{ ($l300Trucks->count() ?? 0) == 0 ? 'disabled' : '' }}>
                                             <i class="bi bi-trash3 me-1"></i> Delete All
                                         </button>
                                     </div>
-                                    <div class="ui-pager-top">
-                                        {{ $l300Trucks->onEachSide(1)->links() }}
-                                    </div>
+                                    <span class="text-muted small">
+                                        Total: <strong>{{ $l300Trucks->count() }}</strong>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -340,17 +323,18 @@
                                                     <td>
                                                         <span
                                                             class="ui-badge 
-    {{ $status === 'available' ? 'ui-badge-completed' : '' }}
-    {{ $status === 'on_trip' ? 'ui-badge-primary' : '' }}
-    {{ $status === 'on_maintenance' ? 'ui-badge-warning' : '' }}
-    {{ $status === 'unavailable' ? 'ui-badge-cancelled' : '' }}">
+                                                                {{ $status === 'available' ? 'ui-badge-completed' : '' }}
+                                                                {{ $status === 'on_trip' ? 'ui-badge-primary' : '' }}
+                                                                {{ $status === 'on_maintenance' ? 'ui-badge-warning' : '' }}
+                                                                {{ $status === 'unavailable' ? 'ui-badge-cancelled' : '' }}">
                                                             <span
                                                                 class="ui-dot 
-           {{ $status === 'available' ? 'ui-dot-completed' : '' }}
-{{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
-{{ $status === 'on_maintenance' ? 'ui-dot-warning' : '' }}
-{{ $status === 'unavailable' ? 'ui-dot-cancelled' : '' }}
-        "></span>
+                                                                    {{ $status === 'available' ? 'ui-dot-completed' : '' }}
+                                                                    {{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
+                                                                    {{ $status === 'on_maintenance' ? 'ui-dot-warning' : '' }}
+                                                                    {{ $status === 'unavailable' ? 'ui-dot-cancelled' : '' }}
+                                                                ">
+                                                            </span>
 
                                                             {{ ucfirst(str_replace('_', ' ', $status)) }}
                                                         </span>
@@ -365,15 +349,11 @@
                                                                 <i class="bi bi-pencil"></i>
                                                             </button>
 
-                                                            <form action="{{ route('owner.trucks.destroy', $truck->id) }}"
-                                                                method="POST" class="d-inline"
-                                                                onsubmit="return confirm('Delete this truck permanently?')">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button class="btn btn-sm ui-icon-btn" title="Delete">
-                                                                    <i class="bi bi-trash3"></i>
-                                                                </button>
-                                                            </form>
+                                                            <button type="button"
+                                                                class="btn btn-sm ui-icon-btn btn-danger"
+                                                                onclick="openDeleteModal({{ $truck->id }})">
+                                                                <i class="bi bi-trash3"></i>
+                                                            </button>
 
                                                             <button class="btn btn-sm btn-info ui-icon-btn"
                                                                 title="View Details"
@@ -429,12 +409,12 @@
                                         <span class="ui-truck-value">
                                             <span
                                                 class="ui-dot 
-      {{ $status === 'available' ? 'ui-dot-completed' : '' }}
-{{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
-{{ $status === 'on_maintenance' ? 'ui-dot-warning' : '' }}
-{{ $status === 'unavailable' ? 'ui-dot-cancelled' : '' }}
-    "></span>
-
+                                                    {{ $status === 'available' ? 'ui-dot-completed' : '' }}
+                                                    {{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
+                                                    {{ $status === 'on_maintenance' ? 'ui-dot-warning' : '' }}
+                                                    {{ $status === 'unavailable' ? 'ui-dot-cancelled' : '' }}
+                                                ">
+                                            </span>
                                             {{ ucfirst(str_replace('_', ' ', $status)) }}
                                         </span>
                                     </div>
@@ -449,14 +429,10 @@
                                         <i class="bi bi-pencil"></i>
                                     </button>
 
-                                    <form action="{{ route('owner.trucks.destroy', $truck->id) }}" method="POST"
-                                        class="d-inline" onsubmit="return confirm('Delete this truck permanently?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm ui-icon-btn" title="Delete">
-                                            <i class="bi bi-trash3"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-sm ui-icon-btn btn-danger"
+                                        onclick="openDeleteModal({{ $truck->id }})">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
 
                                     <button class="btn btn-sm btn-info ui-icon-btn" title="View Details"
                                         onclick="openSidebar({{ $truck->id }})">
@@ -499,11 +475,11 @@
                                         <span class="ui-truck-value">
                                             <span
                                                 class="ui-dot 
-        {{ $status === 'available' ? 'ui-dot-completed' : '' }}
-{{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
-{{ $status === 'on_maintenance' ? 'ui-dot-warning' : '' }}
-{{ $status === 'unavailable' ? 'ui-dot-cancelled' : '' }}
-    "></span>
+                                                    {{ $status === 'available' ? 'ui-dot-completed' : '' }}
+                                                    {{ $status === 'on_trip' ? 'ui-dot-dispatched' : '' }}
+                                                    {{ $status === 'on_maintenance' ? 'ui-dot-warning' : '' }}
+                                                    {{ $status === 'unavailable' ? 'ui-dot-cancelled' : '' }} ">
+                                            </span>
 
                                             {{ ucfirst(str_replace('_', ' ', $status)) }}
                                         </span>
@@ -518,14 +494,10 @@
                                         <i class="bi bi-pencil"></i>
                                     </button>
 
-                                    <form action="{{ route('owner.trucks.destroy', $truck->id) }}" method="POST"
-                                        class="d-inline" onsubmit="return confirm('Delete this truck permanently?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm ui-icon-btn" title="Delete">
-                                            <i class="bi bi-trash3"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-sm ui-icon-btn btn-danger"
+                                        onclick="openDeleteModal({{ $truck->id }})">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
 
                                     <button class="btn btn-sm btn-info ui-icon-btn" title="View Details"
                                         onclick="openSidebar({{ $truck->id }})">
@@ -637,7 +609,7 @@
                         <form method="POST" action="{{ route('owner.trucks.update', $truck->id) }}">
                             @csrf
                             @method('PUT')
-                            
+
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Company</label>
@@ -718,8 +690,8 @@
 
                     <form method="POST" action="{{ route('owner.trucks.destroyAll') }}">
                         @csrf
-                        @method('DELETE')
                         <input type="hidden" name="truck_type" value="L300">
+
                         <button type="submit" class="btn btn-danger ui-pill-btn">
                             Yes, Delete All
                         </button>
@@ -748,8 +720,8 @@
 
                     <form method="POST" action="{{ route('owner.trucks.destroyAll') }}">
                         @csrf
-                        @method('DELETE')
                         <input type="hidden" name="truck_type" value="6W">
+
                         <button type="submit" class="btn btn-danger ui-pill-btn">
                             Yes, Delete All
                         </button>
@@ -786,11 +758,46 @@
 
                     <form method="POST" action="{{ route('owner.trucks.destroyAll') }}">
                         @csrf
-                        @method('DELETE')
 
-                        {{-- No truck_type = delete everything --}}
                         <button type="submit" class="btn btn-danger ui-pill-btn">
                             Yes, Delete Everything
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    {{-- DELETE ONE ON ONE --}}
+
+    <div class="modal fade" id="deleteTruckModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+
+                <div class="modal-header bg-light">
+                    <h6 class="modal-title fw-bold text-danger">Delete Truck</h6>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    Are you sure you want to delete this truck?
+                    <div class="text-muted small mt-2">
+                        This action cannot be undone.
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary ui-pill-btn" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <form method="POST" id="deleteTruckForm">
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit" class="btn btn-danger ui-pill-btn">
+                            Yes, Delete
                         </button>
                     </form>
                 </div>
@@ -838,6 +845,14 @@
             document.getElementById('sidebarOverlay').style.display = 'none';
             document.getElementById('truckSidebar').classList.remove('active');
         }
+
+        function openDeleteModal(truckId) {
+            const form = document.getElementById('deleteTruckForm');
+            form.action = `/owner/trucks/${truckId}`;
+
+            const modal = new bootstrap.Modal(document.getElementById('deleteTruckModal'));
+            modal.show();
+        }
     </script>
 
     <div id="sidebarOverlay" onclick="closeSidebar()"></div>
@@ -867,8 +882,8 @@
         }
 
         /* =========================================================
-                                                                                               CORE UI
-                                                                                            ========================================================= */
+                                                    CORE UI
+                                                 ========================================================= */
         .ui-card {
             border-radius: 18px;
             box-shadow: 0 14px 40px rgba(16, 24, 40, .08);
@@ -898,8 +913,8 @@
 
 
         /* =========================================================
-                                                                                               BUTTONS
-                                                                                            ========================================================= */
+                                                    BUTTONS
+                                                ========================================================= */
         .ui-pill-btn {
             border-radius: 999px;
             padding: .45rem .9rem;
@@ -922,8 +937,8 @@
 
 
         /* =========================================================
-                                                                                               KPI CARDS
-                                                                                            ========================================================= */
+                                                                        KPI CARDS
+                                                                    ========================================================= */
         .ui-kpi-card .card-body {
             padding: 25px 10px;
         }
@@ -948,8 +963,8 @@
 
 
         /* =========================================================
-                                                                                               INDICATORS
-                                                                                            ========================================================= */
+                                                                        INDICATORS
+                                                                    ========================================================= */
         .ui-indicator {
             position: relative;
             overflow: hidden;
@@ -987,8 +1002,8 @@
 
 
         /* =========================================================
-                                                                                               TABLES
-                                                                                            ========================================================= */
+                                                                       TABLES
+                                                                    ========================================================= */
         .ui-table-wrap {
             border: 1px solid #edf0f4;
             border-radius: 16px;
@@ -1026,26 +1041,9 @@
             background: #fafcff;
         }
 
-
         /* =========================================================
-                                                                                               PAGINATION
-                                                                                            ========================================================= */
-        .ui-pager-top {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 6px;
-        }
-
-        .ui-pager-top .pagination {
-            flex-wrap: nowrap;
-            white-space: nowrap;
-            margin-bottom: 0;
-        }
-
-
-        /* =========================================================
-                                                                                               BADGES / STATUS
-                                                                                            ========================================================= */
+                                                                       BADGES / STATUS
+                                                                    ========================================================= */
         .ui-badge {
             display: inline-flex;
             align-items: center;
@@ -1096,8 +1094,8 @@
 
 
         /* =========================================================
-                                                                                               ICON BUTTONS
-                                                                                            ========================================================= */
+                                                                       ICON BUTTONS
+                                                                    ========================================================= */
         .ui-icon-btn {
             border-radius: 12px;
             border: 1px solid transparent;
@@ -1139,8 +1137,8 @@
 
 
         /* =========================================================
-                                                                                               SECTION PILLS
-                                                                                            ========================================================= */
+                                                                       SECTION PILLS
+                                                                    ========================================================= */
         .ui-section-pill {
             display: inline-flex;
             align-items: center;
@@ -1156,8 +1154,8 @@
 
 
         /* =========================================================
-                                                                                               MOBILE CARDS
-                                                                                            ========================================================= */
+                                                                       MOBILE CARDS
+                                                                    ========================================================= */
         .ui-mobile-truck {
             border-radius: 16px;
             transition: .2s ease;
@@ -1216,8 +1214,8 @@
 
 
         /* =========================================================
-                                                                                               HEADER ACTIONS
-                                                                                            ========================================================= */
+                                                                       HEADER ACTIONS
+                                                                    ========================================================= */
         .ui-header-actions {
             display: flex;
             gap: 12px;
@@ -1253,8 +1251,8 @@
 
 
         /* =========================================================
-                                                                                               SIDEBAR
-                                                                                            ========================================================= */
+                                                                       SIDEBAR
+                                                                    ========================================================= */
         #sidebarOverlay {
             position: fixed;
             inset: 0;

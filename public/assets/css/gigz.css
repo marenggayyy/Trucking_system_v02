@@ -5466,9 +5466,12 @@ textarea.form-control-lg {
   height: 100vh;
   background-color: #000; }
   .modal-backdrop.fade {
-    opacity: 0; }
+    opacity: 0.9; }
   .modal-backdrop.show {
-    opacity: 0.5; }
+     background-color: rgba(0, 0, 0, 0.2) !important; /* light dim */
+    backdrop-filter: blur(6px); /* 🔥 BLUR EFFECT */
+    -webkit-backdrop-filter: blur(6px);
+  }
 
 .modal-header {
   display: -webkit-box;

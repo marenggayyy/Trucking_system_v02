@@ -2,7 +2,7 @@
    SIDEBAR BASE
 =============================== */
 .sidebar {
-    width: 260px;
+    width: 300px;
     height: 100vh;
     position: fixed;
     top: 0;
@@ -115,7 +115,7 @@
 =============================== */
 .sidebar-dropdown {
     margin-top: 6px;
-    padding-left: 28px; /* indent only */
+    padding-left: 15px; /* indent only */
 }
 
 /* Submenu item */

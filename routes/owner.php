@@ -46,7 +46,7 @@ Route::middleware(['auth'])
                 Route::put('/{truck}', 'update')->name('update');
                 Route::delete('/{truck}', 'destroy')->name('destroy');
 
-                Route::delete('/destroy-all', 'destroyAll')->name('destroyAll');
+                Route::post('/destroy-all', 'destroyAll')->name('destroyAll');
                 Route::get('/sidebar/{truck}', 'sidebar')->name('sidebar');
             });
 

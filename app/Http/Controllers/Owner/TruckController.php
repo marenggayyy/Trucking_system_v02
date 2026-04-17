@@ -12,19 +12,9 @@ class TruckController extends Controller
 {
     public function index()
     {
-        $sixWTrucks = Truck::where('truck_type', '6W')
-            ->latest()
-            ->paginate(10, ['*'], 'sixw_page');
+        $sixWTrucks = Truck::where('truck_type', '6W')->latest()->get();
+        $l300Trucks = Truck::where('truck_type', 'L300')->latest()->get();
 
-        $l300Trucks = Truck::where('truck_type', 'L300')
-            ->latest()
-            ->paginate(10, ['*'], 'l300_page');
-
-        /*
-        |--------------------------------------------------------------------------
-        | CORRECT STATS (IMPORTANT)
-        |--------------------------------------------------------------------------
-        */
         $stats = [
             'total' => Truck::count(),
             'available' => Truck::where('status', 'available')->count(),
@@ -32,7 +22,6 @@ class TruckController extends Controller
             'out_of_service' => Truck::whereIn('status', ['on_maintenance', 'unavailable'])->count(),
         ];
 
-        // ✅ REQUIRED for blade
         $companies = Company::orderBy('name')->get();
 
         return view('owner.trucks.index', compact('sixWTrucks', 'l300Trucks', 'stats', 'companies'));
@@ -60,23 +49,18 @@ class TruckController extends Controller
     }
 
     public function update(Request $request, Truck $truck)
-{
-    $validated = $request->validate([
-        'company_id' => 'required|exists:companies,id',
-        'plate_number' => [
-            'required',
-            'string',
-            'max:50',
-            Rule::unique('trucks', 'plate_number')->ignore($truck->id),
-        ],
-        'truck_type' => 'required|in:L300,6W',
-        'status' => 'required|in:available,on_trip,on_maintenance,unavailable',
-    ]);
+    {
+        $validated = $request->validate([
+            'company_id' => 'required|exists:companies,id',
+            'plate_number' => ['required', 'string', 'max:50', Rule::unique('trucks', 'plate_number')->ignore($truck->id)],
+            'truck_type' => 'required|in:L300,6W',
+            'status' => 'required|in:available,on_trip,on_maintenance,unavailable',
+        ]);
 
-    $truck->update($validated);
+        $truck->update($validated);
 
-    return back()->with('success', 'Truck updated successfully.');
-}
+        return back()->with('success', 'Truck updated successfully.');
+    }
 
     public function destroy(Truck $truck)
     {
@@ -88,14 +72,26 @@ class TruckController extends Controller
     public function destroyAll(Request $request)
     {
         if ($request->filled('truck_type')) {
-            Truck::where('truck_type', $request->truck_type)->delete();
+            $trucks = Truck::where('truck_type', $request->truck_type)->get();
 
-            return back()->with('success', "{$request->truck_type} trucks deleted successfully.");
+            foreach ($trucks as $truck) {
+                $truck->trips()->delete();
+                $truck->delete();
+            }
+
+            return redirect()
+                ->route('owner.trucks.index')
+                ->with('success', "{$request->truck_type} trucks deleted successfully.");
         }
 
-        Truck::truncate();
+        $trucks = Truck::all();
 
-        return back()->with('success', 'All trucks deleted successfully.');
+        foreach ($trucks as $truck) {
+            $truck->trips()->delete();
+            $truck->delete();
+        }
+
+        return redirect()->route('owner.trucks.index')->with('success', 'All trucks deleted successfully.');
     }
 
     public function sidebar(Truck $truck)

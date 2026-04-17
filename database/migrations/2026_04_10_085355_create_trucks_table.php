@@ -19,9 +19,7 @@ return new class extends Migration {
 
             $table->enum('truck_type', ['6W', 'L300']);
 
-            $table->enum('status', ['active', 'maintenance', 'inactive'])->default('active');
-
-            $table->enum('availability_status', ['available', 'on_trip', 'unavailable'])->default('available');
+            $table->enum('status', ['available', 'on_trip', 'on_maintenance', 'unavailable'])->default('available');
 
             $table->timestamps();
         });
