@@ -326,17 +326,17 @@
                             <a href="{{ route('owner.employees.index', ['role' => 'all', 'q' => request('q')]) }}"
                                 class="btn btn-sm btn-outline-secondary {{ request('role') == 'all' ? 'active' : '' }}">
                                 All
-                                </a>
+                            </a>
 
-                                <a href="{{ route('owner.employees.index', ['role' => 'driver', 'q' => request('q')]) }}"
-                                    class="btn btn-sm btn-outline-primary {{ request('role') == 'driver' ? 'active' : '' }}">
-                                    Driver
-                                </a>
+                            <a href="{{ route('owner.employees.index', ['role' => 'driver', 'q' => request('q')]) }}"
+                                class="btn btn-sm btn-outline-primary {{ request('role') == 'driver' ? 'active' : '' }}">
+                                Driver
+                            </a>
 
-                                <a href="{{ route('owner.employees.index', ['role' => 'helper', 'q' => request('q')]) }}"
-                                    class="btn btn-sm btn-outline-info {{ request('role') == 'helper' ? 'active' : '' }}">
-                                    Helper
-                                </a>
+                            <a href="{{ route('owner.employees.index', ['role' => 'helper', 'q' => request('q')]) }}"
+                                class="btn btn-sm btn-outline-info {{ request('role') == 'helper' ? 'active' : '' }}">
+                                Helper
+                            </a>
                         </div>
 
                     </div>
@@ -352,9 +352,12 @@
                                 <input type="text" name="q" value="{{ request('q') }}" class="form-control"
                                     placeholder="Search">
 
-                                <button type="submit" class="ui-search-clear">
-                                    <i class="bi bi-search"></i>
-                                </button>
+                                @if (request('q'))
+                                    <a href="{{ route('owner.employees.index', ['role' => request('role')]) }}"
+                                        class="ui-search-clear">
+                                        <i class="bi bi-x"></i>
+                                    </a>
+                                @endif
                             </div>
                         </form>
                         <button class="btn btn-sm btn-primary ui-people-btn ui-people-btn--add" data-bs-toggle="modal"
@@ -783,7 +786,7 @@
             right: 8px;
             background: transparent;
             border: none;
-            display: none;
+            display: flex;
             /* hidden by default */
             align-items: center;
             justify-content: center;
@@ -811,10 +814,10 @@
         }
 
         /*
-                                                                                                                                                |--------------------------------------------------------------------------
-                                                                                                                                                | HERO / KPI CARDS
-                                                                                                                                                |--------------------------------------------------------------------------
-                                                                                                                                                */
+                                                                                                                                                    |--------------------------------------------------------------------------
+                                                                                                                                                    | HERO / KPI CARDS
+                                                                                                                                                    |--------------------------------------------------------------------------
+                                                                                                                                                    */
         .ui-hero {
             border-radius: 20px;
             border: 1px solid rgba(0, 0, 0, .05);
@@ -843,10 +846,10 @@
 
 
         /*
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        | KPI DROPDOWN / EYE BUTTON
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        */
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            | KPI DROPDOWN / EYE BUTTON
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            */
         .ui-eye-btn {
             width: 36px;
             height: 36px;
@@ -878,10 +881,10 @@
 
 
         /*
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        | PEOPLE HEADER / ACTIONS
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        */
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            | PEOPLE HEADER / ACTIONS
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            */
         .ui-people-header {
             display: flex;
             justify-content: space-between;
@@ -914,10 +917,10 @@
 
 
         /*
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        | SEARCH BAR
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        */
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            | SEARCH BAR
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            */
         .ui-people-search {
             position: relative;
             width: 320px;
@@ -941,10 +944,10 @@
 
 
         /*
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        | MOBILE PERSON CARDS
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        */
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            | MOBILE PERSON CARDS
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            */
         .ui-mobile-person--centered {
             border-radius: 18px;
             overflow: hidden;
@@ -982,10 +985,10 @@
 
 
         /*
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        | PERSON META
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        */
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            | PERSON META
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            */
         .ui-person-meta-list {
             margin-top: 14px;
             padding-top: 10px;
@@ -1010,10 +1013,10 @@
 
 
         /*
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        | ACTION BUTTONS
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        */
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            | ACTION BUTTONS
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            */
         .ui-person-actions {
             margin-top: 14px;
             display: flex;
@@ -1023,10 +1026,10 @@
 
 
         /*
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        | RESPONSIVE
-                                                                                                                                                                                        |--------------------------------------------------------------------------
-                                                                                                                                                                                        */
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            | RESPONSIVE
+                                                                                                                                                                                            |--------------------------------------------------------------------------
+                                                                                                                                                                                            */
         @media (max-width: 575.98px) {
 
             .ui-people-header {
