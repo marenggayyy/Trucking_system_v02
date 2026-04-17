@@ -66,6 +66,9 @@ Route::middleware(['auth'])
                 Route::put('/{id}', 'update')->name('update');
                 Route::get('/{id}', 'show')->name('show');
                 Route::delete('/{id}', 'destroy')->name('destroy');
+
+                // ✅ FIXED
+                Route::post('/destroy-all', 'destroyAll')->name('destroyAll');
             });
 
         /*

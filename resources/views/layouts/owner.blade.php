@@ -28,6 +28,18 @@
 
     @stack('styles')
 
+    <style>
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .modal-backdrop.show {
+            opacity: 1 !important;
+            backdrop-filter: blur(1px) !important;
+            -webkit-backdrop-filter: blur(1px) !important;
+        }
+    </style>
+
 </head>
 
 

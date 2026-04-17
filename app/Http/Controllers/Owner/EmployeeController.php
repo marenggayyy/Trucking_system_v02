@@ -9,59 +9,40 @@ use App\Http\Controllers\Controller;
 
 class EmployeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::orderBy('name')->get();
+        $query = Employee::query();
 
-        $drivers = $employees->where('default_role', 'driver')->values();
-        $helpers = $employees->where('default_role', 'helper')->values();
+        // SEARCH
+        $q = trim($request->q);
+        if (!empty($q)) {
+            $query->where(function ($sub) use ($q) {
+                $sub->where('name', 'like', "%$q%")
+                    ->orWhere('email', 'like', "%$q%")
+                    ->orWhere('default_role', 'like', "%$q%");
+            });
+        }
 
-        /*
-        |--------------------------------------------------------------------------
-        | DRIVER GROUPS
-        |--------------------------------------------------------------------------
-        */
-        $availableDrivers = $drivers->filter(fn($e) => $e->employment_status === 'active' && $e->availability_status === 'available');
+        // ROLE FILTER
+        $role = $request->role;
+        if (!empty($role) && $role !== 'all') {
+            $query->where('default_role', $role);
+        }
 
-        $onTripDrivers = $drivers->filter(fn($e) => $e->employment_status === 'active' && $e->availability_status === 'on_trip');
+        $employees = $query->latest()->get();
 
-        $onLeaveDrivers = $drivers->filter(fn($e) => $e->employment_status === 'on-leave' || $e->availability_status === 'on_leave');
-
-        $inactiveDrivers = $drivers->filter(fn($e) => $e->employment_status === 'inactive');
-
-        /*
-        |--------------------------------------------------------------------------
-        | HELPER GROUPS
-        |--------------------------------------------------------------------------
-        */
-        $availableHelpers = $helpers->filter(fn($e) => $e->employment_status === 'active' && $e->availability_status === 'available');
-
-        $onTripHelpers = $helpers->filter(fn($e) => $e->employment_status === 'active' && $e->availability_status === 'on_trip');
-
-        $onLeaveHelpers = $helpers->filter(fn($e) => $e->employment_status === 'on-leave' || $e->availability_status === 'on_leave');
-
-        $inactiveHelpers = $helpers->filter(fn($e) => $e->employment_status === 'inactive');
-
-        /*
-        |--------------------------------------------------------------------------
-        | STATS
-        |--------------------------------------------------------------------------
-        */
         $stats = [
-            'total_drivers' => $drivers->count(),
-            'total_helpers' => $helpers->count(),
-
-            'driver_avail' => $availableDrivers->count(),
-            'helper_avail' => $availableHelpers->count(),
-
-            'on_trip_drivers' => $onTripDrivers->count(),
-            'on_trip_helpers' => $onTripHelpers->count(),
-
-            'on_leave' => $onLeaveDrivers->count() + $onLeaveHelpers->count(),
-            'inactive' => $inactiveDrivers->count() + $inactiveHelpers->count(),
+            'drivers' => $employees->where('default_role', 'driver')->count(),
+            'helpers' => $employees->where('default_role', 'helper')->count(),
+            'on_leave' => $employees->where('employment_status', 'on_leave')->count(),
+            'inactive' => $employees->where('employment_status', 'inactive')->count(),
+            'available_drivers' => $employees->where('default_role', 'driver')->where('availability_status', 'available')->count(),
+            'on_trip_drivers' => $employees->where('default_role', 'driver')->where('availability_status', 'on_trip')->count(),
+            'available_helpers' => $employees->where('default_role', 'helper')->where('availability_status', 'available')->count(),
+            'on_trip_helpers' => $employees->where('default_role', 'helper')->where('availability_status', 'on_trip')->count(),
         ];
 
-        return view('owner.employees.index', compact('drivers', 'helpers', 'stats', 'availableDrivers', 'availableHelpers', 'onTripDrivers', 'onTripHelpers', 'onLeaveDrivers', 'onLeaveHelpers', 'inactiveDrivers', 'inactiveHelpers'));
+        return view('owner.employees.index', compact('employees', 'stats'));
     }
 
     public function store(Request $request)
@@ -70,7 +51,7 @@ class EmployeeController extends Controller
             'default_role' => 'required|in:driver,helper',
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255|unique:employees,email',
-            'employment_status' => 'nullable|in:active,inactive,on-leave',
+            'employment_status' => 'nullable|in:active,inactive,on_leave',
             'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
@@ -85,7 +66,7 @@ class EmployeeController extends Controller
 
         if ($employmentStatus === 'inactive') {
             $data['availability_status'] = 'unavailable';
-        } elseif ($employmentStatus === 'on-leave') {
+        } elseif ($employmentStatus === 'on_leave') {
             $data['availability_status'] = 'on_leave';
         } else {
             $data['availability_status'] = 'available';
@@ -97,7 +78,12 @@ class EmployeeController extends Controller
 
         Employee::create($data);
 
-        return back()->with('success', 'Employee added successfully.');
+        return redirect()
+            ->route('owner.employees.index', [
+                'role' => request('role'),
+                'q' => request('q'),
+            ])
+            ->with('success', 'Employee added successfully.');
     }
 
     public function update(Request $request, Employee $employee)
@@ -105,7 +91,7 @@ class EmployeeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255|unique:employees,email,' . $employee->id,
-            'employment_status' => 'nullable|in:active,inactive,on-leave',
+            'employment_status' => 'nullable|in:active,inactive,on_leave',
             'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
@@ -119,7 +105,7 @@ class EmployeeController extends Controller
 
         if ($employmentStatus === 'inactive') {
             $data['availability_status'] = 'unavailable';
-        } elseif ($employmentStatus === 'on-leave') {
+        } elseif ($employmentStatus === 'on_leave') {
             $data['availability_status'] = 'on_leave';
         }
 
