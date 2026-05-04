@@ -29,14 +29,28 @@ class DestinationController extends Controller
 
         $destinations6w = (clone $destinationsQuery)
             ->whereHas('rates', fn($q) => $q->where('truck_type', '6W'))
+            ->with(['rates' => fn($q) => $q->where('truck_type', '6W')])
             ->orderBy('store_name')
             ->paginate($perPage, ['*'], 'page6w')
+            ->through(function ($d) {
+                $rate = $d->rates->first();
+                $d->rate = $rate?->rate;
+                $d->truck_type = '6W';
+                return $d;
+            })
             ->withQueryString();
 
         $destinationsL300 = (clone $destinationsQuery)
             ->whereHas('rates', fn($q) => $q->where('truck_type', 'L300'))
+            ->with(['rates' => fn($q) => $q->where('truck_type', 'L300')])
             ->orderBy('store_name')
             ->paginate($perPage, ['*'], 'pageL300')
+            ->through(function ($d) {
+                $rate = $d->rates->first();
+                $d->rate = $rate?->rate;
+                $d->truck_type = 'L300';
+                return $d;
+            })
             ->withQueryString();
 
         $companies = Company::orderBy('name')->get();
@@ -55,29 +69,22 @@ class DestinationController extends Controller
             'rate' => ['required', 'numeric', 'min:0'],
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | Find Existing Destination First
-        |--------------------------------------------------------------------------
-        */
-        $destination = Destination::firstOrCreate(
-            [
+        // 🔥 FIND OR CREATE DESTINATION
+        $destination = Destination::where('store_code', $data['store_code'])->where('store_name', $data['store_name'])->where('area', $data['area'])->first();
+
+        if (!$destination) {
+            $destination = Destination::create([
                 'company_id' => $data['company_id'],
                 'store_code' => $data['store_code'],
-            ],
-            [
                 'store_name' => $data['store_name'],
                 'area' => $data['area'] ?? null,
-            ],
-        );
+            ]);
+        }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Add / Update Truck Rate
-        |--------------------------------------------------------------------------
-        */
+        // 🔥 SAVE RATE
         $destination->rates()->updateOrCreate(
             [
+                'destination_id' => $destination->id,
                 'truck_type' => $data['truck_type'],
             ],
             [
@@ -117,8 +124,15 @@ class DestinationController extends Controller
             'area' => $data['area'] ?? null,
         ]);
 
-        $destination->rates()->updateOrCreate(['truck_type' => $data['truck_type']], ['rate' => $data['rate']]);
-
+        $destination->rates()->updateOrCreate(
+            [
+                'destination_id' => $destination->id,
+                'truck_type' => $data['truck_type'],
+            ],
+            [
+                'rate' => $data['rate'],
+            ],
+        );
         return back()->with('success', 'Destination updated.');
     }
 }
